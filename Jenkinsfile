@@ -9,21 +9,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-             git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:VARELAdavidhugo/wordpress-k3s.git'
+                git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:VARELAdavidhugo/wordpress-k3s.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+                sh 'docker build -t $IMAGE_NAME:latest -f k3s-deploy/Dockerfile .'
             }
         }
 
         stage('Push to DockerHub') {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: '') {
-                    sh 'docker build -t $IMAGE_NAME:latest -f k3s-deploy/Dockerfile .'
-
+                    sh 'docker push $IMAGE_NAME:latest'
                 }
             }
         }

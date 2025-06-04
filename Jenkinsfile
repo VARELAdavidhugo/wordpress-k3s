@@ -22,7 +22,8 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub', url: '') {
-                    sh 'docker push $IMAGE_NAME:latest'
+                    sh 'docker build -t $IMAGE_NAME:latest -f k3s-deploy/Dockerfile .'
+
                 }
             }
         }

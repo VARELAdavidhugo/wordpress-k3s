@@ -1,0 +1,13 @@
+---
+- name: Installer le client NFS sur les nœuds
+  hosts:
+    - worker1
+    - admin-master
+  become: true
+
+  tasks:
+    - name: Installer nfs-common
+      apt:
+        name: nfs-common
+        state: present
+        update_cache: true

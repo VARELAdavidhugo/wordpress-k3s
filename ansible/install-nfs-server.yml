@@ -1,0 +1,31 @@
+---
+- name: Installer et configurer un serveur NFS sur worker2-nfs
+  hosts: worker2-nfs
+  become: true
+
+  tasks:
+    - name: Installer le serveur NFS
+      apt:
+        name: nfs-kernel-server
+        state: present
+        update_cache: true
+
+    - name: Créer le répertoire de partage NFS
+      file:
+        path: /srv/nfs/kubedata
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: '0777'
+
+    - name: Ajouter l’export NFS
+      lineinfile:
+        path: /etc/exports
+        line: "/srv/nfs/kubedata *(rw,sync,no_subtree_check,no_root_squash)"
+        state: present
+
+    - name: Redémarrer le service NFS
+      systemd:
+        name: nfs-server
+        state: restarted
+        enabled: true

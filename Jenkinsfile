@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'github-ssh', url: 'git@github.com:VARELAdavidhugo/wordpress-k3s.git'
+             git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:VARELAdavidhugo/wordpress-k3s.git'
             }
         }
 

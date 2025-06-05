@@ -1,0 +1,11 @@
+groups:
+  - name: k8s-alerts
+    rules:
+      - alert: PodDown
+        expr: kube_pod_status_ready{condition="true"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pod down"
+          description: "Un pod est tombé"

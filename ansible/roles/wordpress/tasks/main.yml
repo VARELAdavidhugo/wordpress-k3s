@@ -1,0 +1,41 @@
+---
+- name: Créer le namespace wordpress s’il n’existe pas
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: wordpress
+  ignore_errors: yes
+
+- name: Créer le PVC MySQL
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    src: "{{ playbook_dir }}/../k8s/app/mysql-pvc.yaml"
+
+- name: Déployer MySQL
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    src: "{{ playbook_dir }}/../k8s/app/mysql-deploy.yaml"
+
+- name: Déployer service MySQL
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    src: "{{ playbook_dir }}/../k8s/app/mysql-svc.yaml"
+
+- name: Déployer WordPress
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    src: "{{ playbook_dir }}/../k8s/app/wordpress-deploy.yaml"
+
+- name: Déployer service WordPress
+  kubernetes.core.k8s:
+    kubeconfig: /home/azureuser/.kube/config
+    state: present
+    src: "{{ playbook_dir }}/../k8s/app/wordpress-svc.yaml"

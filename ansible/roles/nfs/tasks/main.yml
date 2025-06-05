@@ -1,0 +1,34 @@
+---
+- name: Installer les paquets serveur NFS
+  apt:
+    name: nfs-kernel-server
+    state: present
+  when: inventory_hostname in groups['nfs_server']
+
+- name: Créer le répertoire NFS partagé
+  file:
+    path: /srv/nfs/kubedata
+    state: directory
+    mode: '0777'
+    recurse: yes
+  when: inventory_hostname in groups['nfs_server']
+
+- name: Configurer /etc/exports
+  blockinfile:
+    path: /etc/exports
+    block: |
+      /srv/nfs/kubedata *(rw,sync,no_subtree_check,no_root_squash)
+  when: inventory_hostname in groups['nfs_server']
+
+- name: Redémarrer NFS
+  systemd:
+    name: nfs-server
+    state: restarted
+    enabled: yes
+  when: inventory_hostname in groups['nfs_server']
+
+- name: Installer les clients NFS
+  apt:
+    name: nfs-common
+    state: present
+  when: inventory_hostname in groups['nfs_client']
